@@ -91,7 +91,7 @@ end
 % ---------------- Execute both cases ----------------
 % Generate and save the figures for both cases.
 makeFigure(Ck, Cm, k, m, false);  % Case 1: without noise
-print('Figures/Figure12','-dpng','-r300')
+print('Figures/Figure12.jpg','-dpng','-r300')
 
 makeFigure(Ck, Cm, k, m, true);   % Case 2: with noise
-print('Figures/Figure13','-dpng','-r300')
+print('Figures/Figure13.jpg','-dpng','-r300')

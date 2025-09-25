@@ -108,37 +108,48 @@ yvals = linspace(-10,10,200);                     % Vertical axis for PDF curves
 for i = 1:2
     subplot(1,2,i)
     if i == 1
-        scatter(jk(1:n/6), score(1:n/6),'.')
-        xlabel("{\it c_k}")
+        % --- scatter handle + name ---
+        h_scatter = scatter(jk(1:n/6), score(1:n/6), '.', ...
+                            'DisplayName','Samples');
+        xlabel('{\it j_k}')   % ← c_k가 아니라 j_k
         binCenters = binCenter_jk;
         mu  = score_mean_by_jk;
         sig = score_std_by_jk;
     else
-        scatter(SB(1:n), score(1:n),'.')
-        xlabel("{\it S_B}")
+        h_scatter = scatter(SB(1:n), score(1:n), '.', ...
+                            'DisplayName','Samples');
+        xlabel('{\it S_B}')
         binCenters = binCenter_SB;
         mu  = score_mean_by_SB;
         sig = score_std_by_SB;
     end
-    
+
     hold on
-    % Overlay normal distribution curves for each bin
+    h_pdf = gobjects(0); labels = {};
+
+    % Normal curves per bin
     for j = 1:length(binCenters)
-        if isnan(mu(j)) || isnan(sig(j)) || sig(j)==0
-            continue
-        end
+        if isnan(mu(j)) || isnan(sig(j)) || sig(j)==0, continue, end
         pdf_vals = normpdf(yvals, mu(j), sig(j));
-        pdf_vals = pdf_vals / max(pdf_vals) * 0.05;  % Scaled to fit bin width
-        plot(binCenters(j) - 0.025 + pdf_vals, yvals,'LineWidth',1.5)
+        pdf_vals = pdf_vals / max(pdf_vals) * 0.05;
+
+        h_pdf(end+1) = plot(binCenters(j) - 0.025 + pdf_vals, yvals, ...
+            'LineWidth',1.5, 'DisplayName', ...
+            sprintf('%.2f–%.2f', edges(j), edges(j+1))); %#ok<*AGROW>
+        labels{end+1} = sprintf('%.2f–%.2f', edges(j), edges(j+1));
     end
+
+
     hold off
-    
     box on
-    xlim([0.68 1.02])
-    ylim([-10 10])
+    xlim([0.68 1.02]); ylim([-10 10])
     ylabel('Score')
-    set(gca, 'FontName','times')
+    set(gca,'FontName','Times')
+
+    % Legend: Samples + all bin ranges
+    legend([h_scatter h_pdf], [{'Samples'} labels], ...
+        'Location','northwest','Box','on','FontName','Times')
 end
 
-% Save figure as 300 dpi PNG
-print('Figures/Figure11','-dpng','-r300')
+% Save figure as 300 dpi JPG
+print('Figures/Figure11.jpg','-dpng','-r300')

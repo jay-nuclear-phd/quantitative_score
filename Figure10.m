@@ -79,9 +79,7 @@ T_ck = table(binCenter_ck', score_mean_by_ck', score_std_by_ck', ...
 T_SB = table(binCenter_SB', score_mean_by_SB', score_std_by_SB', ...
             'VariableNames', {'SB_bin_center','score_mean_by_SB','score_std_by_SB'})
 
-%% Visualization
-% This section creates a scatter plot of the score vs. ck and SB,
-% and overlays the normal distribution for each bin.
+%% Visualization with bin-range legends
 figure('Color','w','Position',[100 100 1000 400]); % Wide figure
 n = 5000;                                         % Number of scatter points
 yvals = linspace(-10,10,200);                     % Vertical axis for PDF curves
@@ -89,13 +87,13 @@ yvals = linspace(-10,10,200);                     % Vertical axis for PDF curves
 for i = 1:2
     subplot(1,2,i)
     if i == 1
-        scatter(ck(1:n), score(1:n),'.')
+        h_scatter = scatter(ck(1:n), score(1:n), '.', 'DisplayName','Scores');
         xlabel("{\it c_k}")
         binCenters = binCenter_ck;
         mu  = score_mean_by_ck;
         sig = score_std_by_ck;
     else
-        scatter(SB(1:n), score(1:n),'.')
+        h_scatter = scatter(SB(1:n), score(1:n), '.', 'DisplayName','Scores');
         xlabel("{\it S_B}")
         binCenters = binCenter_SB;
         mu  = score_mean_by_SB;
@@ -103,14 +101,19 @@ for i = 1:2
     end
     
     hold on
+    h_pdf = gobjects(0); labels = {};
+    
     % Overlay normal distribution curves for each bin
     for j = 1:length(binCenters)
         if isnan(mu(j)) || isnan(sig(j)) || sig(j)==0
             continue
         end
         pdf_vals = normpdf(yvals, mu(j), sig(j));
-        pdf_vals = pdf_vals / max(pdf_vals) * 0.05;  % Scaled to fit bin width
-        plot(binCenters(j) - 0.025 + pdf_vals, yvals,'LineWidth',1.5)
+        pdf_vals = pdf_vals / max(pdf_vals) * 0.05;  % Scale to fit
+        h_pdf(end+1) = plot(binCenters(j) - 0.025 + pdf_vals, yvals, ...
+            'LineWidth',1.5, 'DisplayName', ...
+            sprintf('%.2f–%.2f', edges(j), edges(j+1))); %#ok<*AGROW>
+        labels{end+1} = sprintf('%.2f–%.2f', edges(j), edges(j+1));
     end
     hold off
     
@@ -118,8 +121,13 @@ for i = 1:2
     xlim([0.68 1.02])
     ylim([-10 10])
     ylabel('Score')
-    set(gca, 'FontName','times')
+    set(gca, 'FontName','Times')
+    
+    % Legend: Samples + all bin ranges
+    legend([h_scatter h_pdf], [{'Scores'} labels], ...
+        'Location','northwest','Box','on','FontName','Times')
 end
 
-% Save figure as 300 dpi PNG
-print('Figures/Figure10','-dpng','-r300')
+
+% Save figure as 300 dpi JPG
+print('Figures/Figure10.jpg','-dpng','-r300')

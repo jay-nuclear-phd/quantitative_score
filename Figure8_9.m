@@ -12,6 +12,7 @@ Cm = load("Cm");
 k = load("k");
 m = load("m");
 Ck = (Ck + Ck')/2; % Symmetrize the covariance matrix
+mu_names = {'Parametric','Nonparametric','Whisper','TSURFER'};
 
 % Initialization
 n = 10000;
@@ -45,12 +46,17 @@ for j = 1:4
     hold(ax,'on'); box(ax,'on');
 
     % histogram
-    histogram(ax, score(:,j), ...
-        'Normalization','probability',
-        'BinEdges', edges,
-        'FaceColor',[0 0.4470 0.7410],
-        'EdgeColor','k',
+    h = histogram(ax, score(:,j), ...
+        'Normalization','probability', ...
+        'BinEdges', edges, ...
+        'FaceColor',[0 0.4470 0.7410], ...
+        'EdgeColor','k', ...
         'LineWidth',0.5);
+
+    % add legend (top-left)
+    legend(ax, h, sprintf('%s score distribution', mu_names{j}), ...
+        'Location','northwest', ...
+        'FontName','Times');
 
     % axes style
     set(ax,'FontName','Times');
@@ -60,7 +66,7 @@ for j = 1:4
 
     % labels
     % put panel label together with xlabel (two lines)
-    xlabel(ax, sprintf('Collected scores\n\bf%s', panel_labels{j}), ...
+    xlabel(ax, sprintf('Collected scores\n%s', panel_labels{j}), ...
         'FontName','Times','FontSize',14);
 
     ylabel(ax,'Probability mass','FontName','Times');
@@ -68,14 +74,14 @@ for j = 1:4
     % stats (upper-right)
     txt = sprintf('Mean : %.4f\nSTD  : %.4f', mu(j), sig(j));
     text(ax, 0.97, 0.92, txt, ...
-        'Units','normalized',
-        'HorizontalAlignment','right',
-        'VerticalAlignment','top',
+        'Units','normalized', ...
+        'HorizontalAlignment','right', ...
+        'VerticalAlignment','top', ...
         'FontName','Times');
 end
 
 % Save the first figure
-print(gcf, 'Figures/Figure8.png', '-dpng', '-r300');
+print(gcf, 'Figures/Figure8.jpg', '-dpng', '-r300');
 
 %%
 % Plot means on a standard normal curve
@@ -95,8 +101,8 @@ mu_colors = [ ...
 
 h = gobjects(1,4);
 for j = 1:4
-    h(j) = xline(ax2, mu(j), '--', 'Color', mu_colors(j,:),
-        'LineWidth', 2,
+    h(j) = xline(ax2, mu(j), '--', 'Color', mu_colors(j,:), ...
+        'LineWidth', 2, ...
         'DisplayName', sprintf('%s, \mu = %.3f', mu_names{j}, mu(j)));
 end
 
@@ -106,4 +112,4 @@ xlim(ax2, [-4 4]); ylim(ax2, [0 max(y)*1.05]);
 xlabel(ax2, '\sigma');
 
 % Save the second figure
-print(gcf, 'Figures/Figure9.png', '-dpng', '-r300');
+print(gcf, 'Figures/Figure9.jpg', '-dpng', '-r300');

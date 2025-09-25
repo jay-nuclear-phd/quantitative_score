@@ -40,4 +40,4 @@ xlabel('Energy (eV)','FontName','Times New Roman','FontSize',18);
 ylabel('Energy (eV)','FontName','Times New Roman','FontSize',18);
 
 % Save the figure as a high-resolution PNG file.
-print(gcf, 'Figures/Figure6.png', '-dpng', '-r300');
+print(gcf, 'Figures/Figure6.jpg', '-dpng', '-r300');
