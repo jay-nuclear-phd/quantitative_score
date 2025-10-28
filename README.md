@@ -24,4 +24,5 @@ The following data files are used in the MATLAB scripts:
 2.  The data files (`Ck`, `Cm`, `k`, `m`, etc.) are loaded by the MATLAB scripts to perform the calculations and generate the plots.
 
 Licensed under CC-BY 4.0: https://creativecommons.org/licenses/by/4.0/
+
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses
